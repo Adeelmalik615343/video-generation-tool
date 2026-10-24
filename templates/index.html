@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pro AI Video Studio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div>
+          <span class="eyebrow">PRO AI VIDEO FACTORY</span>
+          <h1>Turn any topic into a ready-to-export video.</h1>
+        </div>
+        <div class="stats">
+          <div class="stat-box">
+            <strong>Auto script</strong>
+            <span>AI-generated scenes</span>
+          </div>
+          <div class="stat-box">
+            <strong>Narration</strong>
+            <span>Voice-ready output</span>
+          </div>
+          <div class="stat-box">
+            <strong>Export</strong>
+            <span>MP4 + project files</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel form-panel">
+          <div class="section-header">
+            <h2>New Project</h2>
+            <span class="badge">Research + Video</span>
+          </div>
+
+          <form method="post">
+            <div class="field-group">
+              <label for="topic">Topic / fact / research idea</label>
+              <textarea id="topic" name="topic" rows="5" placeholder="Example: Hidden lakes beneath Antarctica's ice sheet"></textarea>
+            </div>
+
+            <div class="grid-two">
+              <div class="field-group">
+                <label for="mode">Mode</label>
+                <select id="mode" name="mode">
+                  <option value="short">Short Video</option>
+                  <option value="long">Documentary</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label for="duration">Duration</label>
+                <input id="duration" name="duration" type="number" min="30" max="1800" value="60" />
+              </div>
+            </div>
+
+            <div class="grid-two">
+              <div class="field-group">
+                <label for="voice">Voice</label>
+                <select id="voice" name="voice">
+                  <option value="default">Default</option>
+                  <option value="zira">Zira</option>
+                  <option value="dave">Dave</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label for="aspect">Aspect ratio</label>
+                <select id="aspect" name="aspect">
+                  <option value="9:16">Vertical 9:16</option>
+                  <option value="16:9">Landscape 16:9</option>
+                  <option value="1:1">Square 1:1</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="style">Visual style</label>
+              <select id="style" name="style">
+                <option value="cinematic">Cinematic</option>
+                <option value="documentary">Documentary</option>
+                <option value="modern">Modern</option>
+              </select>
+            </div>
+
+            <button type="submit">Generate video</button>
+          </form>
+
+          {% if status %}
+          <div class="status success">{{ status }}</div>
+          {% endif %}
+          {% if error %}
+          <div class="status error">{{ error }}</div>
+          {% endif %}
+        </section>
+
+        <section class="panel output-panel">
+          <div class="section-header">
+            <h2>Project Preview</h2>
+            <span class="badge accent">Ready to render</span>
+          </div>
+
+          {% if project %}
+          <div class="project-card">
+            <div class="meta-row">
+              <span><strong>Topic:</strong> {{ project.topic }}</span>
+            </div>
+            <div class="meta-row">
+              <span><strong>Mode:</strong> {{ project.mode }}</span>
+              <span><strong>Aspect:</strong> {{ project.aspect }}</span>
+            </div>
+            <div class="meta-row links">
+              <a href="{{ project.video_path }}" target="_blank">Open MP4</a>
+              <a href="{{ project.script_path }}" target="_blank">Open script</a>
+              <a href="{{ project.references_path }}" target="_blank">Sources</a>
+            </div>
+
+            {% if project.research %}
+            <div class="research-box">
+              <h3>{{ project.research.title }}</h3>
+              <p>{{ project.research.summary[:500] }}{% if project.research.summary|length > 500 %}...{% endif %}</p>
+              {% if project.research.source_url %}
+              <a href="{{ project.research.source_url }}" target="_blank">Source reference</a>
+              {% endif %}
+            </div>
+            {% endif %}
+
+            {% if project.image_status %}
+            <div class="status info">{{ project.image_status }}</div>
+            {% endif %}
+            {% if project.voice_status %}
+            <div class="status success">{{ project.voice_status }}</div>
+            {% endif %}
+            {% if project.caption_status %}
+            <div class="status success">{{ project.caption_status }}</div>
+            {% endif %}
+
+            <div class="scenes">
+              {% for scene in project.scenes %}
+              <div class="scene-block">
+                <h3>{{ scene.title }}</h3>
+                <p>{{ scene.text }}</p>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% else %}
+            <div class="placeholder">
+              <p>Use the form to generate a short video or documentary project, then preview the scene structure here.</p>
+            </div>
+          {% endif %}
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
