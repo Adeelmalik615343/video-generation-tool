@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 ROOT_DIR = Path(__file__).resolve().parents[1]
+load_dotenv(ROOT_DIR / ".env")
+
 OUTPUT_DIR = ROOT_DIR / "output"
 PROJECTS_DIR = ROOT_DIR / "projects"
 TEMP_DIR = ROOT_DIR / "temp"

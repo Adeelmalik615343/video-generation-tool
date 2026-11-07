@@ -60,9 +60,9 @@
               <div class="field-group">
                 <label for="voice">Voice</label>
                 <select id="voice" name="voice">
-                  <option value="default">Default</option>
-                  <option value="zira">Zira</option>
-                  <option value="dave">Dave</option>
+                  {% for voice_value, voice_label in voice_options %}
+                  <option value="{{ voice_value }}" {% if voice_value == selected_voice %}selected{% endif %}>{{ voice_label }}</option>
+                  {% endfor %}
                 </select>
               </div>
               <div class="field-group">
@@ -75,13 +75,19 @@
               </div>
             </div>
 
-            <div class="field-group">
-              <label for="style">Visual style</label>
-              <select id="style" name="style">
-                <option value="cinematic">Cinematic</option>
-                <option value="documentary">Documentary</option>
-                <option value="modern">Modern</option>
-              </select>
+            <div class="grid-two">
+              <div class="field-group">
+                <label for="image_count">Images in video</label>
+                <input id="image_count" name="image_count" type="number" min="1" max="12" value="{{ selected_image_count }}" />
+              </div>
+              <div class="field-group">
+                <label for="style">Visual style</label>
+                <select id="style" name="style">
+                  <option value="cinematic">Cinematic</option>
+                  <option value="documentary">Documentary</option>
+                  <option value="modern">Modern</option>
+                </select>
+              </div>
             </div>
 
             <button type="submit">Generate video</button>
@@ -109,11 +115,21 @@
             <div class="meta-row">
               <span><strong>Mode:</strong> {{ project.mode }}</span>
               <span><strong>Aspect:</strong> {{ project.aspect }}</span>
+              <span><strong>Images:</strong> {{ project.selected_image_count or project.image_count or 3 }}</span>
             </div>
+            <div class="preview-box">
+              {% if project.video_path %}
+              <video controls preload="metadata" playsinline class="preview-video">
+                <source src="{{ project.video_download_url or project.video_path }}" type="video/mp4" />
+                Your browser does not support HTML5 video.
+              </video>
+              {% endif %}
+            </div>
+
             <div class="meta-row links">
-              <a href="{{ project.video_path }}" target="_blank">Open MP4</a>
-              <a href="{{ project.script_path }}" target="_blank">Open script</a>
-              <a href="{{ project.references_path }}" target="_blank">Sources</a>
+              <a href="{{ project.video_download_url or project.video_path }}" target="_blank" download>Download MP4</a>
+              <a href="{{ project.script_download_url or project.script_path }}" target="_blank" download>Download script</a>
+              <a href="{{ project.reference_download_url or project.references_path }}" target="_blank" download>Download sources</a>
             </div>
 
             {% if project.research %}

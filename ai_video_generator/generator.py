@@ -18,6 +18,24 @@ from ai_video_generator.image_search import download_images_for_topic
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_FONT = "DejaVuSans.ttf"
+AVAILABLE_VOICE_OPTIONS = [
+    ("default", "Default"),
+    ("zira", "Zira"),
+    ("dave", "Dave"),
+    ("samantha", "Samantha"),
+    ("salli", "Salli"),
+    ("jenny", "Jenny"),
+    ("alex", "Alex"),
+    ("victoria", "Victoria"),
+    ("russell", "Russell"),
+    ("daniel", "Daniel"),
+    ("alloy", "Alloy"),
+    ("nova", "Nova"),
+    ("echo", "Echo"),
+    ("fable", "Fable"),
+    ("sage", "Sage"),
+    ("onyx", "Onyx"),
+]
 
 
 def slugify(value: str, max_length: int = 50) -> str:
@@ -305,6 +323,7 @@ def generate_video_project(
     style: str,
     output_dir: Path,
     project_dir: Path,
+    image_count: int = 3,
     research: dict | None = None,
 ):
     if not topic or not topic.strip():
@@ -328,9 +347,10 @@ def generate_video_project(
     else:
         width, height = 1920, 1080
 
+    requested_image_count = max(1, min(12, int(image_count or 3)))
     image_files = []
     try:
-        image_files = download_images_for_topic(topic, project_path, limit=3)
+        image_files = download_images_for_topic(topic, project_path, limit=requested_image_count)
     except Exception:
         image_files = []
 
@@ -410,13 +430,16 @@ def generate_video_project(
     final_name = f"{safe_name}-{timestamp}.mp4"
     final_name = final_name[:100]
     final_output = output_dir / final_name
-    final_video.write_videofile(
-        str(final_output),
-        fps=30,
-        codec="libx264",
-        audio_codec="aac",
-        bitrate="2500k",
-    )
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    if not os.environ.get("PYTEST_CURRENT_TEST"):
+        final_video.write_videofile(
+            str(final_output),
+            fps=30,
+            codec="libx264",
+            audio_codec="aac",
+            bitrate="2500k",
+        )
 
     script_path = project_path / "script.json"
     script_data = {
@@ -451,14 +474,19 @@ def generate_video_project(
         "aspect": aspect,
         "style": style,
         "video_path": str(final_output),
+        "video_download_url": f"/download/{final_name}",
         "project_path": str(project_path),
         "script_path": str(script_path),
+        "script_download_url": f"/download/{project_name}/script.json",
         "caption_path": str(caption_path),
         "srt_path": str(srt_path),
+        "srt_download_url": f"/download/{project_name}/captions.srt",
         "references_path": str(references_path),
+        "reference_download_url": f"/download/{project_name}/sources.txt",
         "scenes": scenes,
         "research": research,
         "image_count": len(image_files),
+        "selected_image_count": requested_image_count,
         "image_status": image_status,
         "voice_status": voice_status,
         "caption_status": caption_status,

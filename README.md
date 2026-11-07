@@ -32,12 +32,19 @@ python -m pip install -r requirements.txt
 
 3. Start the app:
 
+Create a file named `.env` in the project folder and add your API key:
+
+```env
+PIXABAY_API_KEY=your-pixabay-api-key
+```
+
+Then run:
+
 ```powershell
-$env:PIXABAY_API_KEY = "your-new-pixabay-api-key"
 python app.py
 ```
 
-Pixabay image search uses `PIXABAY_API_KEY` when set and falls back to Wikimedia Commons otherwise. Set the variable in the same terminal before starting the app.
+Pixabay image search uses `PIXABAY_API_KEY` from `.env` when set and falls back to Wikimedia Commons otherwise. Existing environment variables also work and take precedence over values in `.env`.
 
 4. Open this URL in a browser:
 

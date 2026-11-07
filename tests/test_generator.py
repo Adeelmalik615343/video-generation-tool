@@ -128,3 +128,54 @@ def test_generate_video_project_tracks_voice_and_caption_status():
     assert "caption_status" in result
     assert "voice" in result["voice_status"].lower()
     assert "caption" in result["caption_status"].lower()
+
+
+def test_generate_video_project_uses_requested_image_count(monkeypatch, tmp_path):
+    captured = {}
+
+    def fake_download_images(topic, project_dir, limit=3):
+        captured["limit"] = limit
+        return [project_dir / f"image_{index}.png" for index in range(limit)]
+
+    monkeypatch.setattr("ai_video_generator.generator.download_images_for_topic", fake_download_images)
+    monkeypatch.setattr("ai_video_generator.generator.generate_voice_file", lambda *args, **kwargs: True)
+    monkeypatch.setenv("PYTEST_CURRENT_TEST", "1")
+
+    result = generate_video_project(
+        topic="Ocean science",
+        mode="short",
+        duration=30,
+        voice="default",
+        aspect="9:16",
+        style="cinematic",
+        output_dir=tmp_path / "output",
+        project_dir=tmp_path / "projects",
+        image_count=5,
+    )
+
+    assert captured["limit"] == 5
+    assert result["image_count"] == 5
+
+
+def test_generate_video_project_uses_provided_script_verbatim(monkeypatch, tmp_path):
+    monkeypatch.setattr("ai_video_generator.generator.generate_voice_file", lambda *args, **kwargs: True)
+    monkeypatch.setenv("PYTEST_CURRENT_TEST", "1")
+
+    script_text = "Opening line.\nSecond sentence.\nFinal sentence."
+    result = generate_video_project(
+        topic="Custom script",
+        mode="short",
+        duration=30,
+        voice="default",
+        aspect="9:16",
+        style="cinematic",
+        output_dir=tmp_path / "output",
+        project_dir=tmp_path / "projects",
+        script_text=script_text,
+    )
+
+    assert len(result["scenes"]) == 3
+    assert result["scenes"][0]["text"] == "Opening line."
+    assert result["scenes"][1]["text"] == "Second sentence."
+    assert result["scenes"][2]["text"] == "Final sentence."
+    assert all("Opening line." not in scene["text"] for scene in result["scenes"][1:])

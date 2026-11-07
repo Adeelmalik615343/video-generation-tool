@@ -1,12 +1,14 @@
 :root {
-  --bg: #07111d;
-  --panel: rgba(12, 20, 32, 0.9);
-  --panel-strong: #0e1c2e;
-  --border: rgba(155, 182, 255, 0.18);
+  --bg: #081420;
+  --bg-2: #101d31;
+  --panel: rgba(15, 24, 38, 0.86);
+  --panel-strong: #122235;
+  --border: rgba(138, 172, 255, 0.22);
   --text: #edf6ff;
-  --muted: #b0c2d9;
-  --accent: #6dd3ff;
-  --accent-strong: #4ea8ff;
+  --muted: #b8c9dd;
+  --accent: #7dd3fc;
+  --accent-strong: #5b8cff;
+  --accent-alt: #8b5cf6;
   --success: #7ef2cf;
   --warning: #ffd27a;
   --danger: #ff8d8d;
@@ -17,9 +19,9 @@
 html, body {
   margin: 0;
   background:
-    radial-gradient(circle at top left, rgba(78, 168, 255, 0.22), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(126, 242, 207, 0.18), transparent 25%),
-    var(--bg);
+    radial-gradient(circle at top left, rgba(125, 211, 252, 0.2), transparent 28%),
+    radial-gradient(circle at 80% 22%, rgba(139, 92, 246, 0.18), transparent 24%),
+    linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 100%);
   color: var(--text);
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -42,9 +44,9 @@ body {
   margin-bottom: 26px;
   padding: 24px 28px;
   border: 1px solid var(--border);
-  border-radius: 22px;
-  background: rgba(14, 28, 46, 0.9);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.2);
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(17, 31, 49, 0.94), rgba(18, 29, 51, 0.88));
+  box-shadow: 0 24px 50px rgba(7, 12, 20, 0.38);
 }
 
 .eyebrow {
@@ -95,11 +97,11 @@ h1 {
 }
 
 .panel {
-  background: var(--panel);
+  background: linear-gradient(180deg, rgba(16, 25, 39, 0.96), rgba(12, 21, 34, 0.94));
   border: 1px solid var(--border);
   border-radius: 22px;
   padding: 22px;
-  box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+  box-shadow: 0 20px 44px rgba(8, 15, 22, 0.36);
 }
 
 .section-header {
@@ -152,14 +154,31 @@ label {
 textarea, input, select, button {
   width: 100%;
   border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(127, 164, 255, 0.26);
+  background: linear-gradient(180deg, rgba(17, 30, 48, 0.9), rgba(12, 20, 33, 0.9));
   color: var(--text);
   font: inherit;
 }
 
 textarea, input, select {
   padding: 12px 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--accent) 50%), linear-gradient(135deg, var(--accent) 50%, transparent 50%);
+  background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 36px;
+}
+
+select option {
+  background: #102033;
+  color: var(--text);
 }
 
 textarea {
@@ -176,12 +195,12 @@ textarea {
 button {
   padding: 14px 16px;
   border: none;
-  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  background: linear-gradient(135deg, var(--accent), var(--accent-alt));
   color: #07111d;
   font-weight: 800;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 12px 20px rgba(78,168,255,0.28);
+  box-shadow: 0 16px 26px rgba(91, 140, 255, 0.35);
 }
 
 button:hover {
@@ -228,6 +247,22 @@ button:hover {
 
 .meta-row.links {
   margin-top: 4px;
+}
+
+.preview-box {
+  margin: 8px 0 12px;
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(9, 15, 26, 0.7);
+  border: 1px solid var(--border);
+}
+
+.preview-video {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  border-radius: 14px;
+  background: #000;
 }
 
 .meta-row a,
