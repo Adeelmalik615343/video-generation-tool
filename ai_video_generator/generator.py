@@ -69,6 +69,33 @@ def generate_script(topic: str, mode: str, research_summary: str = "") -> list[d
     return build_storyboard(topic, mode, research_summary)
 
 
+def build_scenes_from_script_text(script_text: str) -> list[dict[str, Any]]:
+    cleaned = (script_text or "").strip()
+    if not cleaned:
+        return []
+
+    parts = []
+    for raw_line in cleaned.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        line = line.lstrip("-•*#").strip()
+        if line:
+            parts.append(line)
+
+    if not parts:
+        return []
+
+    scenes = []
+    for index, text in enumerate(parts, start=1):
+        scenes.append({
+            "title": f"Scene {index}",
+            "text": text,
+            "duration": 5 if len(text.split()) <= 12 else 7,
+        })
+    return scenes
+
+
 def build_captions(scenes: list[dict]) -> list[str]:
     captions = []
     for scene in scenes:
@@ -325,6 +352,7 @@ def generate_video_project(
     project_dir: Path,
     image_count: int = 3,
     research: dict | None = None,
+    script_text: str | None = None,
 ):
     if not topic or not topic.strip():
         raise ValueError("Topic cannot be empty.")
@@ -337,7 +365,10 @@ def generate_video_project(
     project_path = project_dir / project_name
     project_path.mkdir(parents=True, exist_ok=True)
 
-    scenes = generate_script(topic, mode, research.get("summary", ""))
+    if script_text and script_text.strip():
+        scenes = build_scenes_from_script_text(script_text)
+    else:
+        scenes = generate_script(topic, mode, research.get("summary", ""))
     caption_lines = build_captions(scenes)
 
     if aspect == "9:16":

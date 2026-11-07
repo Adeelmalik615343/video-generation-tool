@@ -39,7 +39,17 @@
           <form method="post">
             <div class="field-group">
               <label for="topic">Topic / fact / research idea</label>
-              <textarea id="topic" name="topic" rows="5" placeholder="Example: Hidden lakes beneath Antarctica's ice sheet"></textarea>
+              <textarea id="topic" name="topic" rows="4" placeholder="Example: Hidden lakes beneath Antarctica's ice sheet"></textarea>
+            </div>
+
+            <div class="field-group">
+              <label for="script_text">Exact script to use (optional)</label>
+              <textarea id="script_text" name="script_text" rows="6" placeholder="Paste the script exactly as you want it read. If this field is filled, the app reads only this script and does not add extra wording.">{{ script_text or '' }}</textarea>
+            </div>
+
+            <div class="field-group">
+              <label for="script_file">Or upload a script file (.txt, .md)</label>
+              <input id="script_file" name="script_file" type="file" accept=".txt,.md,.doc,.docx,.csv" />
             </div>
 
             <div class="grid-two">

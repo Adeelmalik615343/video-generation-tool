@@ -39,6 +39,7 @@ def home():
     error = None
     voice = "default"
     image_count = 3
+    script_text = ""
 
     if request.method == "POST":
         topic = request.form.get("topic", "").strip()
@@ -46,16 +47,23 @@ def home():
         duration = int(request.form.get("duration", 45) or 45)
         voice = request.form.get("voice", "default")
         image_count = max(1, min(12, int(request.form.get("image_count", 3) or 3)))
+        script_text = request.form.get("script_text", "").strip()
+        uploaded_script = request.files.get("script_file")
+        if uploaded_script and uploaded_script.filename:
+            try:
+                script_text = uploaded_script.read().decode("utf-8", errors="replace").strip()
+            except Exception:
+                script_text = ""
         aspect = request.form.get("aspect", "9:16")
         style = request.form.get("style", "cinematic")
 
-        if not topic:
-            error = "Please enter a topic, fact, or idea to generate a video."
+        if not topic and not script_text:
+            error = "Please enter a topic, paste the exact script, or upload a script file to generate a video."
         else:
             try:
-                research = fetch_wikipedia_summary(topic)
+                research = fetch_wikipedia_summary(topic) if topic else {"title": topic or "Custom script", "summary": script_text, "source_url": ""}
                 project = generate_video_project(
-                    topic=topic,
+                    topic=topic or "Custom script",
                     mode=mode,
                     duration=duration,
                     voice=voice,
@@ -65,6 +73,7 @@ def home():
                     project_dir=PROJECTS_DIR,
                     image_count=image_count,
                     research=research,
+                    script_text=script_text,
                 )
                 status = "Video generated successfully."
             except Exception as exc:  # pragma: no cover - UI-level catch
@@ -78,6 +87,7 @@ def home():
         voice_options=AVAILABLE_VOICE_OPTIONS,
         selected_voice=voice if request.method == "POST" else "default",
         selected_image_count=image_count if request.method == "POST" else 3,
+        script_text=script_text if request.method == "POST" else "",
     )
 
 
